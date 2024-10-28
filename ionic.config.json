@@ -1,0 +1,7 @@
+{
+  "name": "Ami-Travel",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

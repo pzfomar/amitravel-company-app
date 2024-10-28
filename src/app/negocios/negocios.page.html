@@ -1,0 +1,215 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="toolbar">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Cuenta
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true" color="light">
+  <ion-refresher slot="fixed" (ionRefresh)="refrescar($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-accordion-group>
+    <ion-accordion value="first">
+      <ion-item slot="header" color="light">
+        <ion-label>Negocio</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <form [formGroup]="formNegocio" (ngSubmit)="guardarNegocio()" novalidate>
+          <ion-row>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Nombre</ion-label>
+                <ion-input formControlName="nombre" type="text" disabled={{modificarNegocio}}></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Estatus</ion-label>
+                <ion-select formControlName="estatus" interface="action-sheet" interface="popover" disabled={{modificarNegocio}}>
+                  <ion-select-option value="true">Activo</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Descripcion</ion-label>
+                <ion-textarea formControlName="descripcion" placeholder="Enter more information here..." disabled={{modificarNegocio}}></ion-textarea>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Lugar</ion-label>
+                <ion-input formControlName="lugar" type="text" disabled={{modificarNegocio}}></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Mapa</ion-label>
+                <ion-input formControlName="mapa" type="text" (ionChange)="tansformarIFrame($event)" disabled={{modificarNegocio}}></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Imagen</ion-label>
+                <ion-input formControlName="imagen" type="url" disabled={{modificarNegocio}}></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-list>
+                <ion-item color="dark">
+                  <ion-label>Horarios</ion-label>
+                  <ion-button color="primary" (click)="nuevoHorario()" disabled={{modificarNegocio}}>
+                    <ion-icon name="add"></ion-icon>
+                  </ion-button>
+                </ion-item>
+                <ion-item color="dark" *ngFor="let horario of horarios; index as i">
+                  <ion-item color="dark">
+                    <ion-label position="floating">Abre</ion-label>
+                    <ion-input type="time" value={{horario.abre}} disabled="true" disabled={{modificarNegocio}}></ion-input>
+                  </ion-item>
+                  <ion-item color="dark">
+                    <ion-label position="floating">Cierre</ion-label>
+                    <ion-input type="time" value={{horario.cierre}} disabled="true" disabled={{modificarNegocio}}></ion-input>
+                  </ion-item>
+                  <ion-item color="dark">
+                    <ion-label position="floating">Dia</ion-label>
+                    <ion-input type="text" value={{horario.dia}} disabled="true" disabled={{modificarNegocio}}></ion-input>
+                  </ion-item>
+                  <ion-item color="dark">
+                    <ion-button color="tertiary" (click)="nuevoHorario(i)" disabled={{modificarNegocio}}>
+                      <ion-icon name="create"></ion-icon>
+                    </ion-button>
+                  </ion-item>
+                  <ion-item color="dark">
+                    <ion-button color="danger" (click)="eliminarHorario(i)" disabled={{modificarNegocio}}>
+                      <ion-icon name="remove"></ion-icon>
+                    </ion-button>
+                  </ion-item>
+                </ion-item>
+              </ion-list>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12">
+              <ion-button *ngIf="!modificarNegocio" type="submit" color="primary" expand="full" disabled={{!this.formNegocio.valid}}>Guardar</ion-button>
+              <ion-button *ngIf="!modificarNegocio" color="danger" expand="full" (click)="modificarNegocio = true;">Cancelar</ion-button>
+              <ion-button *ngIf="modificarNegocio" color="primary" expand="full" (click)="modificarNegocio = false;">Modificar</ion-button>
+            </ion-col>
+          </ion-row>
+        </form>
+      </div>
+    </ion-accordion>
+    <ion-accordion value="second">
+      <ion-item slot="header" color="light">
+        <ion-label>Usuario</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <form [formGroup]="formUsuario" (ngSubmit)="guardar()" novalidate>
+          <ion-row>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Apodo</ion-label>
+                <ion-input formControlName="apodo" type="text" disabled={{modificarUsuario}}></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Contraseña</ion-label>
+                <ion-input formControlName="contrasenia" type="password" disabled={{modificarUsuario}}></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Rol</ion-label>
+                <ion-select formControlName="rol" interface="popover" disabled={{modificarUsuario}}>
+                  <ion-select-option value="CLIENTE" checked="true">Cliente</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Estatus</ion-label>
+                <ion-select formControlName="estatus" interface="action-sheet" interface="popover" disabled={{modificarUsuario}}>
+                  <ion-select-option value="true">Activo</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12">
+              <ion-button *ngIf="!modificarUsuario" type="submit" color="primary" expand="full" disabled={{!this.formUsuario.valid}}>Guardar</ion-button>
+              <ion-button *ngIf="!modificarUsuario" color="danger" expand="full" (click)="modificarUsuario = true;">Cancelar</ion-button>
+              <ion-button *ngIf="modificarUsuario" color="primary" expand="full" (click)="modificarUsuario = false;">Modificar</ion-button>
+            </ion-col>
+          </ion-row>
+        </form>
+      </div>
+    </ion-accordion>
+    <ion-accordion value="third">
+      <ion-item slot="header" color="light">
+        <ion-label>Persona</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <form [formGroup]="formPersona" (ngSubmit)="guardar()" novalidate>
+          <ion-row>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Correo</ion-label>
+                <ion-input formControlName="correo" type="email" disabled={{modificarPersona}}></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Nombre</ion-label>
+                <ion-input formControlName="nombre" type="text" disabled={{modificarPersona}}></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Apellido paterno</ion-label>
+                <ion-input formControlName="apellidoPaterno" type="text" disabled={{modificarPersona}}></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Apellido materno</ion-label>
+                <ion-input formControlName="apellidoMaterno" type="text" disabled={{modificarPersona}}></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Edad</ion-label>
+                <ion-input formControlName="edad" type="number" disabled={{modificarPersona}}></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Telefono</ion-label>
+                <ion-input formControlName="telefono" type="text" disabled={{modificarPersona}}></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Estatus</ion-label>
+                <ion-select formControlName="estatus" interface="action-sheet" interface="popover" disabled={{modificarPersona}}>
+                  <ion-select-option value="true">Activo</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12">
+              <ion-button *ngIf="!modificarPersona" type="submit" color="primary" expand="full" disabled={{!this.formPersona.valid}}>Guardar</ion-button>
+              <ion-button *ngIf="!modificarPersona" color="danger" expand="full" (click)="modificarPersona = true;">Cancelar</ion-button>
+              <ion-button *ngIf="modificarPersona" color="primary" expand="full" (click)="modificarPersona = false;">Modificar</ion-button>
+            </ion-col>
+          </ion-row>
+        </form>
+      </div>
+    </ion-accordion>
+  </ion-accordion-group>
+</ion-content>

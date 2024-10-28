@@ -1,0 +1,186 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="toolbar">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Eventos
+    </ion-title>
+		<ion-buttons slot="end">
+			<ion-button color="light" (click)="isModalOpen = true;">
+				Nuevo
+			</ion-button>
+		</ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true" color="light">
+  <ion-refresher slot="fixed" (ionRefresh)="refrescar($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-modal [isOpen]="isModalOpen">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title style="padding-inline: inherit;" *ngIf="!id">Nuevo evento</ion-title>
+          <ion-title style="padding-inline: inherit;" *ngIf="id">Editando evento id:{{id}}</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+          <ion-row>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Tipo</ion-label>
+                <ion-select formControlName="tipo" interface="action-sheet">
+                  <ion-select-option value="PUBLICO">Publico</ion-select-option>
+                  <ion-select-option value="PRIVADO">Privado</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Nombre</ion-label>
+                <ion-input formControlName="nombre" type="text"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Descripcion</ion-label>
+                <ion-textarea formControlName="descripcion" placeholder="Enter more information here..."></ion-textarea>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Lugar</ion-label>
+                <ion-input formControlName="lugar" type="text"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Mapa</ion-label>
+                <ion-input formControlName="mapa" type="text" (ionChange)="tansformarIFrame($event)"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Imagen</ion-label>
+                <ion-input formControlName="imagen" type="url"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-item>
+                <ion-label position="floating">Estatus</ion-label>
+                <ion-select formControlName="estatus" interface="action-sheet" interface="popover">
+                  <ion-select-option value="true">Activo</ion-select-option>
+                  <ion-select-option value="false">Inactivo</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-list>
+                <ion-item color="dark">
+                  <ion-label>Horarios</ion-label>
+                  <ion-button color="primary" (click)="nuevoHorario()">
+                    <ion-icon name="add"></ion-icon>
+                  </ion-button>
+                </ion-item>
+                <ion-item color="dark" *ngFor="let horario of horarios; index as i">
+                  <ion-item color="dark">
+                    <ion-label position="floating">Abre</ion-label>
+                    <ion-input type="time" value={{horario.abre}} disabled="true"></ion-input>
+                  </ion-item>
+                  <ion-item color="dark">
+                    <ion-label position="floating">Cierre</ion-label>
+                    <ion-input type="time" value={{horario.cierre}} disabled="true"></ion-input>
+                  </ion-item>
+                  <ion-item color="dark">
+                    <ion-label position="floating">Dia</ion-label>
+                    <ion-input type="text" value={{horario.dia}} disabled="true"></ion-input>
+                  </ion-item>
+                  <ion-item color="dark">
+                    <ion-button color="tertiary" (click)="nuevoHorario(i)">
+                      <ion-icon name="create"></ion-icon>
+                    </ion-button>
+                  </ion-item>
+                  <ion-item color="dark">
+                    <ion-button color="danger" (click)="eliminarHorario(i)">
+                      <ion-icon name="remove"></ion-icon>
+                    </ion-button>
+                  </ion-item>
+                </ion-item>
+              </ion-list>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="6">
+              <ion-button type="submit" color="primary" expand="full" disabled={{!this.form.valid}}>Guardar</ion-button>
+            </ion-col>
+            <ion-col size="6">
+              <ion-button color="danger" expand="full" (click)="limpiar()">Cancelar</ion-button>
+            </ion-col>
+          </ion-row>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <div *ngIf="page">
+    <table>
+      <caption>
+        <ion-searchbar placeholder="Buscar" (ionChange)="buscar($event.target.value)" (ionClear)="buscar('')">
+        </ion-searchbar>
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Negocio</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Descripcion</th>
+          <th scope="col">Tipo</th>
+          <th scope="col">Lugar</th>
+          <th scope="col">Imagen</th>
+          <th scope="col">Estatus</th>
+          <th scope="col">Creacion</th>
+          <th scope="col">Actualizacion</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let dato of page.contenido;">
+          <td data-label="Id">{{dato.id}}</td>
+          <td data-label="Negocio">{{dato.negocio.id + '.- ' + dato.negocio.nombre}}</td>
+          <td data-label="Nombre">{{dato.nombre}}</td>
+          <td data-label="Descripcion">{{dato.descripcion}}</td>
+          <td data-label="Tipo">{{dato.tipo}}</td>
+          <td data-label="Lugar">{{dato.lugar}}</td>
+          <td data-label="Imagen"><img src={{dato.imagen}} alt={{dato.imagen}} style="width: auto;height: 50px;"></td>
+          <td data-label="Estatus">{{dato.estatus? 'Activo': 'Inactivo'}}</td>
+          <td data-label="Creacion">{{dato.creacion}}</td>
+          <td data-label="Actualizacion">{{dato.actualizacion}}</td>
+          <td data-label="">
+            <ion-button color="primary" expand="full" (click)="editar(dato)">Editar</ion-button>
+            <ion-button color="danger" expand="full" (click)="eliminar(dato.id)">Desactivar</ion-button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <section style="text-align: center;">
+      <ion-button [disabled]="page.paginaSeleccionada == 0" color="toolbar" (click)="seleccionarPagina(0)">
+        <ion-icon name="arrow-undo"></ion-icon>
+      </ion-button>
+      <ion-icon *ngIf="page.paginaSeleccionada > 1" style="vertical-align: middle;margin-left: 5px;margin-right: 5px;"
+        name="ellipsis-horizontal"></ion-icon>
+      <ng-container *ngFor="let i of iArray(page.paginas)">
+        <ion-button *ngIf="i >= (page.paginaSeleccionada - 1) && i <= (page.paginaSeleccionada + 1)"
+          [disabled]="page.paginaSeleccionada == i" color="toolbar" (click)="seleccionarPagina(i)">{{i}}</ion-button>
+      </ng-container>
+      <ion-icon *ngIf="page.paginaSeleccionada < (page.paginas - 2)"
+        style="vertical-align: middle;margin-left: 5px;margin-right: 5px;" name="ellipsis-horizontal"></ion-icon>
+      <ion-button [disabled]="page.paginas == 0 || page.paginaSeleccionada == page.paginas - 1" color="toolbar"
+        (click)="seleccionarPagina(page.paginas - 1)">
+        <ion-icon name="arrow-redo"></ion-icon>
+      </ion-button>
+    </section>
+  </div>
+</ion-content>
