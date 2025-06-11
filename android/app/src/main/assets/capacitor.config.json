@@ -1,0 +1,6 @@
+{
+	"appId": "app.web.amitravel.negocio",
+	"appName": "AmiTravel-Negocio",
+	"webDir": "www",
+	"bundledWebRuntime": false
+}

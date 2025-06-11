@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">AmiTravel-Negocio</string>
+    <string name="title_activity_main">AmiTravel-Negocio</string>
+    <string name="package_name">app.web.amitravel.negocio</string>
+    <string name="custom_url_scheme">app.web.amitravel.negocio</string>
+</resources>
